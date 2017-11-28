@@ -1,0 +1,15 @@
+Exercise 4
+==========
+
+Question 2
+----------
+
+I think the program will print:
+
+ CST1A
+
+Running the program produces:
+
+ CST1A
+
+as predicted.

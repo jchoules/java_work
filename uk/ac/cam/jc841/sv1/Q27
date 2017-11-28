@@ -1,0 +1,68 @@
+==> A.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class A {
+  public A() {
+    System.out.println("Constructing A");
+  }
+}
+
+==> B.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class B extends A {
+  public B() {
+    System.out.println("Constructing B");
+  }
+}
+
+==> C.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class C extends B {
+  public C() {
+    System.out.println("Constructing C");
+  }
+}
+
+==> A2.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class A2 {
+  public A2(String msg) {
+    System.out.println("Constructing A2 with message:");
+    System.out.println(msg);
+  }
+}
+
+==> B2.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class B2 extends A2 {
+  public B2() {
+    super("B2's constructor has filled this in by calling super");
+    System.out.println("Constructing B2");
+  }
+}
+
+==> C2.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class C2 extends B2 {
+  public C2() {
+    System.out.println("Constructing C2");
+  }
+}
+
+==> ABCTest.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class ABCTest {
+  public static void main(String[] args) {
+    System.out.println("With zero-argument constructor on A:");
+    C testC = new C();
+
+    System.out.println("With one-argument constructor on A2:");
+    C2 testC2 = new C2();
+  }
+}

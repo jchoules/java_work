@@ -1,0 +1,41 @@
+Exercise 1
+==========
+
+Question 1
+----------
+
+System.out.println(i = 7);
+
+Question 2
+----------
+
+The snippet prints out:
+  10
+  9
+The '10' comes from the first print statement, which prints out the value of j
+before it is decremented, since j-- is a postdecrement operation. The '9' comes
+from the second print statement, which prints out the decremented value of j.
+
+Question 3
+----------
+
+The program prints out:
+  9
+  9
+
+Question 4
+----------
+
+  (i)  x = 4
+  (ii) y = 7
+
+Question 5
+----------
+
+1<<n shifts the binary digit 1 left by n places, leaving n 0s to its right. A 1
+followed by n 0s represents 2^n in binary.
+
+Question 6
+----------
+
+x>>4&1

@@ -1,0 +1,106 @@
+Exercise 2
+==========
+
+Question 1
+----------
+
+i = col + row * 8;
+
+Question 2
+----------
+
+col = i % 8;
+
+Question 3
+----------
+
+row = i / 8;
+
+Question 4
+----------
+
+1
+
+Question 5
+----------
+
+1
+
+Question 6
+----------
+
+____________________________________________
+| world               | col | row | result |
+|---------------------|-----|-----|--------|
+| 0x20A0600000000000L | 1   | 1   | 0      |
+| 0x20A0600000000000L | 4   | 4   | 1      |
+| 0x20A0600000000000L | 5   | 5   | 2      |
+| 0x20A0600000000000L | 4   | 6   | 3      |
+| 0x20A0600000000000L | 62  | 3   | 0      |
+--------------------------------------------
+
+Question 7
+----------
+
+The following code snippet:
+
+  long world = 0x20A0600000000000L;
+  System.out.println(countNeighbours(world,1,1));
+  System.out.println(countNeighbours(world,4,4));
+  System.out.println(countNeighbours(world,5,5));
+  System.out.println(countNeighbours(world,4,6));
+  System.out.println(countNeighbours(world,62,3));
+
+prints out:
+
+  0
+  1
+  2
+  3
+  0
+
+as expected.
+
+Question 8
+----------
+
+____________________________________________
+| world               | col | row | result |
+|---------------------|-----|-----|--------|
+| 0x20A0600000000000L | 1   | 1   | false  |
+| 0x20A0600000000000L | 4   | 6   | true   |
+| 0x20A0600000000000L | 5   | 6   | true   |
+| 0x20A0600000000000L | 5   | 8   | false  |
+| 0x20A0600000000000L | 6   | 5   | true   |
+| 0x20A0600000000000L | 6   | 6   | false  |
+| 0x20A0600000000000L | 7   | 6   | false  |
+| 0x20A0600000000000L | 62  | 3   | false  |
+--------------------------------------------
+
+Question 9
+----------
+
+The following code snippet:
+
+  long world = 0x20A0600000000000L;
+  System.out.println(computeCell(world,1,1));
+  System.out.println(computeCell(world,4,6));
+  System.out.println(computeCell(world,5,6));
+  System.out.println(computeCell(world,5,8));
+  System.out.println(computeCell(world,6,5));
+  System.out.println(computeCell(world,6,6));
+  System.out.println(computeCell(world,7,6));
+  System.out.println(computeCell(world,62,3));
+
+prints out:
+
+  false
+  true
+  true
+  false
+  true
+  false
+  false
+  false
+
+as expected.

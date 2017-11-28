@@ -1,0 +1,45 @@
+package uk.ac.cam.jc841.sv3;
+import java.util.*;
+
+public class Car implements Comparable<Car> {
+  private String manufacturer;
+  private int age;
+
+  public Car(String m, int a) {
+    manufacturer = m;
+    age = a;
+  }
+
+  public String getManufacturer() {
+    return manufacturer;
+  }
+  public int getAge() {
+    return age;
+  }
+
+  public int compareTo(Car c) {
+    return manufacturer.compareTo(c.manufacturer);
+  }
+
+  public static void main(String[] args) {
+    List<Car> cars = new ArrayList<Car>();
+    cars.add(new Car("Lada", 40));
+    cars.add(new Car("Renault", 6));
+    cars.add(new Car("Massey Ferguson", 7));
+    cars.add(new Car("DeLorean", 28));
+    cars.add(new Car("Bugatti", 1));
+    cars.add(new Car("Renault", 3));
+    cars.add(new Car("DeLorean", 128));
+
+    Collections.sort(cars);
+    for (Car c : cars) {
+      System.out.println(c.getManufacturer());
+    }
+
+    Collections.sort(cars, new CarComparator());
+    for (Car c : cars) {
+      System.out.println(c.getManufacturer());
+      System.out.println(c.getAge());
+    }
+  }
+}

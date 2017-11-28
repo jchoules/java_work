@@ -1,0 +1,619 @@
+==> Q35 <==
+package uk.ac.cam.jc841.sv3;
+
+public class MyClass implements Cloneable {
+  private String mName;
+  private int[] mData;
+
+  public MyClass(MyClass toCopy) {
+    // A 'normal' constructor for convenience when testing.
+    this.mName = toCopy.mName;
+    this.mData = toCopy.mData;
+  }
+
+  public MyClass(String name, int[] data) {
+    // This constructor makes a shallow copy with respect to mData.
+    // A deep copy could be achieved by using:
+    //   mData = data.clone();
+    // in place of:
+    //   mData = data;
+    // which in fact is what we do in MyClass.clone().
+    mName = name;
+    mData = data;
+  }
+
+  public Object clone() throws CloneNotSupportedException {
+    // Makes a deep copy as detailed in the comment in the copy constructor.
+    MyClass cloned = (MyClass)super.clone();
+    cloned.mData = mData.clone();
+    return cloned;
+  }
+
+  public void report() {
+    // Prints out selected data about the object's members.
+    System.out.println(mName);
+    System.out.println(mData[0]);
+  }
+
+  public void tweak() {
+    // Makes some alterations to the object's members to demonstrate how these
+    // are shared (or not) between deep and shallow clones.
+    mName = new String("Holly");
+    mData[0] = 7;
+  }
+
+  public static void main(String[] args) throws CloneNotSupportedException {
+    String name = new String("Jake");
+    int[] data = new int[] {1,3,5};
+    MyClass myObject = new MyClass(name, data);
+    System.out.println("Original object:");
+    myObject.report();          // prints Jake 1
+
+    MyClass myConstructedCopy = new MyClass(myObject);
+    System.out.println("Copy of original object using copy constructor:");
+    myConstructedCopy.report(); // prints Jake 1
+    MyClass myClonedCopy = (MyClass)myObject.clone();
+    System.out.println("Copy of original object using clone():");
+    myClonedCopy.report();      // prints Jake 1
+
+    System.out.println("Now tweaking original object...");
+    myObject.tweak();
+    System.out.println("Original object:");
+    myObject.report();          // prints Holly 7
+    System.out.println("Copy of original object using copy constructor:");
+    myConstructedCopy.report(); // prints Jake 7
+    System.out.println("Copy of original object using clone():");
+    myClonedCopy.report();      // prints Jake 1
+  }
+}
+
+==> Q39 <==
+==> OOPList.java <==
+package uk.ac.cam.jc841.sv3;
+
+public interface OOPList<T> {
+  public void addHead(T x);
+  public void deleteHead() throws OOPListException;
+  public T getHead() throws OOPListException;
+  public T getNth(int n) throws OOPListException;
+  public int length();
+}
+
+==> OOPLinkedList.java <==
+package uk.ac.cam.jc841.sv3;
+
+public class OOPLinkedList<T> implements OOPList<T> {
+  private class OOPLinkedListElement {
+    private T contents;
+    private OOPLinkedListElement next;
+
+    public OOPLinkedListElement(T x) {
+      contents = x;
+    }
+
+    public T getContents() {
+      return contents;
+    }
+
+    public void setContents(T x) {
+      contents = x;
+    }
+
+    public OOPLinkedListElement getNext() {
+      return next;
+    }
+
+    public void setNext(OOPLinkedListElement n) {
+      next = n;
+    }
+  }
+
+  private OOPLinkedListElement head;
+
+  public boolean isEmpty() {
+    return (head == null);
+  }
+
+  public void addHead(T x) {
+    OOPLinkedListElement newHead = new OOPLinkedListElement(x);
+    newHead.setNext(head);
+    head = newHead;
+  }
+
+  public void deleteHead() throws OOPListException {
+    if (isEmpty()) {
+      throw new OOPListException("nothing to delete");
+    } else {
+      head = head.getNext();
+    }
+  }
+
+  public T getHead() throws OOPListException {
+    if (isEmpty()) {
+      throw new OOPListException("nothing to get");
+    } else {
+      return head.getContents();
+    }
+  }
+
+  public T getNth(int n) throws OOPListException {
+    if (n > length() - 1 || n < -length()) {
+      throw new OOPListException("index out of bounds");
+    } else if (n < 0) {
+      n += length();
+    }
+
+    OOPLinkedListElement currentElement = head;
+    for (int i = 0; i < n; i++) {
+      currentElement = currentElement.getNext();
+    }
+
+    return currentElement.getContents();
+  }
+
+  public int length() {
+    OOPLinkedListElement currentElement = head;
+    int count = 0;
+    while (currentElement != null) {
+      currentElement = currentElement.getNext();
+      count++;
+    }
+    return count;
+  }
+
+  public void reverse() {
+    OOPLinkedListElement previousElement = null;
+    OOPLinkedListElement currentElement = head;
+    OOPLinkedListElement nextElement;
+    while (currentElement != null) {
+      nextElement = currentElement.getNext();
+      currentElement.setNext(previousElement);
+      previousElement = currentElement;
+      currentElement = nextElement;
+    }
+    head = previousElement;
+  }
+}
+
+==> OOPListException.java <==
+package uk.ac.cam.jc841.sv3;
+
+public class OOPListException extends RuntimeException {
+  public OOPListException(String msg) {
+    super(msg);
+  }
+}
+
+==> OOPListTest.java <==
+package uk.ac.cam.jc841.sv3;
+
+public class OOPListTest {
+  public static void main(String[] args) {
+    OOPList testList = new OOPLinkedList<Double>();
+    testList.addHead(3.0);
+    testList.addHead(6.72);
+    testList.addHead(-2.0003);
+
+    System.out.println(testList.length());
+    System.out.println(testList.getHead());
+    System.out.println(testList.getNth(1));
+    System.out.println(testList.getNth(-1));
+
+    try {
+      System.out.println(testList.getNth(5));
+    } catch (OOPListException ole) {
+      System.out.println(ole.getMessage());
+    }
+
+    testList.deleteHead();
+    System.out.println(testList.getHead());
+
+    testList.deleteHead();
+    testList.deleteHead();
+
+    try {
+      System.out.println(testList.getHead());
+    } catch (OOPListException ole) {
+      System.out.println(ole.getMessage());
+    }
+
+    System.out.println(testList.length());
+  }
+}
+
+==> Q40 <==
+package uk.ac.cam.jc841.sv3;
+import java.util.*;
+
+public class MarkBook {
+  private Map<String, Integer> mMarks;
+  private static Integer maximumMark = 100;
+
+  public MarkBook(Map<String, Integer> marks) {
+    mMarks = marks;
+  }
+
+  public void setMark(String name, Integer mark) {
+    mMarks.put(name, mark);
+  }
+
+  public Integer getMark(String name) {
+    return mMarks.get(name);
+  }
+
+  public List<String> allNames() {
+    // Map.keySet() returns a Set, which is converted to a List via an array.
+    List<String> names
+      = Arrays.asList(mMarks.keySet().toArray(new String[0]));
+    Collections.sort(names);
+    return names;
+  }
+
+  private Integer minimumMark(int percent) {
+    Integer minimumRank = mMarks.size() * percent / 100;
+    // If the desired percentage is too small to contain anyone...
+    if (minimumRank <= 0) {
+      // ...set the minimum mark higher than the maximum.
+      return maximumMark + 1;
+    } else {
+      // Same trick as was used in allNames(), since Map.values() returns a
+      // Collection.
+      List<Integer> marks
+        = Arrays.asList(mMarks.values().toArray(new Integer[0]));
+      Collections.sort(marks);
+      // Index from the end since list is sorted in ascending order.
+      // Note that allowing minimumRank <= 0 at this point would cause trouble.
+      return marks.get(marks.size() - minimumRank);
+    }
+  }
+
+  public List<String> topPercent(int percent) {
+    // Clamp percentage between 0 and 100.
+    percent = Math.max(percent, 0);
+    percent = Math.min(percent, 100);
+    Integer minimumMark = minimumMark(percent);
+    List<String> names = new ArrayList<String>();
+    for (Map.Entry<String, Integer> mark : mMarks.entrySet()) {
+      if (mark.getValue() >= minimumMark) {
+        names.add(mark.getKey());
+      }
+    }
+    return names;
+  }
+
+  // Perhaps this method should be constrained to returning Integers, to be
+  // consistent with the precision to which marks are actually stored.
+  // Returning a Double is more mathematically correct, though.
+  public Double medianMark() {
+    List<Integer> marks
+      = Arrays.asList(mMarks.values().toArray(new Integer[0]));
+    Collections.sort(marks);
+    if (marks.size() % 2 == 0) {
+      return (marks.get(marks.size() / 2 - 1)
+               + marks.get(marks.size() / 2)) / 2.0;
+    } else {
+      return marks.get(marks.size() / 2).doubleValue();
+    }
+  }
+
+  public static void main(String[] args) {
+    MarkBook markBook = new MarkBook(new HashMap<String, Integer>());
+    // Conveniently, all the students have unique first names...
+    // A more rigourous inplementation would have a Person or Name class with a
+    // custom natural sort order (probably surname/forename).
+    markBook.setMark("Alice", 76);
+    markBook.setMark("Bob", 33);
+    markBook.setMark("Aaron", 97);
+    markBook.setMark("Zachary", 65);
+    markBook.setMark("Mark", 42);
+
+    System.out.println("Alphabetised names:");
+    for (String name : markBook.allNames()) {
+      System.out.println(name);
+      System.out.println(markBook.getMark(name));
+    }
+
+    System.out.println("Top 65%:");
+    for (String name : markBook.topPercent(65)) {
+      System.out.println(name);
+      System.out.println(markBook.getMark(name));
+    }
+
+    System.out.println("Median mark:");
+    System.out.println(markBook.medianMark());
+  }
+}
+
+==> Q41 <==
+package uk.ac.cam.jc841.sv3;
+import java.util.*;
+
+public class CollectionArrayList<E> extends AbstractList<E> implements List<E> {
+  // Type erasure prevents us from instantiating an array of Es, so we use
+  // Object[] instead. We rely on Java's type checking to stop consumers of our
+  // class from creating CollectionArrayLists with heterogeneous types.
+  private Object[] contents;
+  private int length;
+  private static int expansionAmount = 10;
+
+  public CollectionArrayList() {
+    contents = new Object[0];
+    length = 0;
+  }
+
+  // We use a wildcard to allow CollectionArrayList<E> to contain instances of
+  // subtypes of E, not just instances of E itself.
+  public CollectionArrayList(Collection<? extends E> c) {
+    contents = c.toArray();
+    length = c.size();
+  }
+
+  private void expand() {
+    Object[] newContents = new Object[contents.length + expansionAmount];
+    for (int i = 0; i < length; i++) {
+      newContents[i] = contents[i];
+    }
+    contents = newContents;
+  }
+
+  private void checkBounds(int n) throws IndexOutOfBoundsException {
+    if (n >= length || n < 0) {
+      throw new IndexOutOfBoundsException();
+    }
+  }
+
+  // If we're adding something to the list, we should allow the index to be one
+  //  higher than the list's current highest index (namely length - 1).
+  private void checkAddBounds(int n) throws IndexOutOfBoundsException {
+    if (n > length || n < 0) {
+      throw new IndexOutOfBoundsException();
+    }
+  }
+
+  @Override
+  public E get(int n) throws IndexOutOfBoundsException {
+    checkBounds(n);
+    return (E)contents[n];
+  }
+
+  @Override
+  public E set(int n, E x) throws IndexOutOfBoundsException {
+    checkBounds(n);
+    E oldX = get(n);
+    contents[n] = x;
+    return oldX;
+  }
+
+  @Override
+  public void add(int n, E x) throws IndexOutOfBoundsException {
+    checkAddBounds(n);
+    if (!(length < contents.length)) {
+      expand();
+    }
+
+    for (int i = length - 1; i >= n; i--) {
+      contents[i + 1] = contents[i];
+    }
+
+    contents[n] = x;
+    length++;
+  }
+
+  @Override
+  public E remove(int n) throws IndexOutOfBoundsException {
+    checkBounds(n);
+    E removed = get(n);
+
+    for (int i = n; i < length - 1; i++) {
+      contents[i] = contents[i + 1];
+    }
+
+    length--;
+    return removed;
+  }
+
+  @Override
+  public int size() {
+    return length;
+  }
+
+  public static void main(String[] args) {
+    CollectionArrayList<String> test = new CollectionArrayList();
+
+    // We can use AbstractList's add() method, which builds off our own.
+    test.add("aardvark");
+    test.add("beaver");
+    test.add("cuckoo");
+    test.add("dingo");
+
+    System.out.println(test.get(1));
+
+    System.out.println(test.set(2, "chaffinch"));
+    System.out.println(test.get(2));
+
+    System.out.println(test.size());
+    System.out.println(test.remove(1));
+    System.out.println(test.size());
+
+    test.add(2, "bison");
+    System.out.println(test.size());
+
+    System.out.println("List before sorting:");
+    for (String s : test) {
+      System.out.println(s);
+    }
+
+    Collections.sort(test);
+    System.out.println("List after sorting:");
+    for (String s : test) {
+      System.out.println(s);
+    }
+  }
+}
+
+==> Q44 <==
+package uk.ac.cam.jc841.sv3;
+
+public class Point3D implements Comparable<Point3D> {
+  private final double mX;
+  private final double mY;
+  private final double mZ;
+
+  public Point3D(double x, double y, double z) {
+    mX = x;
+    mY = y;
+    mZ = z;
+  }
+
+  public double getX() {
+    return mX;
+  }
+  public double getY() {
+    return mY;
+  }
+  public double getZ() {
+    return mZ;
+  }
+
+  public int compareTo(Point3D p) {
+    if (mZ > p.mZ) {
+      return 1;
+    } else if (mZ < p.mZ) {
+      return -1;
+    } else if (mY > p.mY) {
+      return 1;
+    } else if (mY < p.mY) {
+      return -1;
+    } else if (mX > p.mX) {
+      return 1;
+    } else if (mX < p.mX) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
+  public static void main(String[] args) {
+    Point3D p1 = new Point3D(2.0, 5.4, -3.0);
+    Point3D p2 = new Point3D(4.5, 0.3, -3.0);
+    Point3D p3 = new Point3D(2.0, 5.0, 19.3);
+    Point3D p4 = new Point3D(2.0, 5.0, -3.0);
+
+    System.out.println(p1.compareTo(p2));
+    System.out.println(p2.compareTo(p1));
+    System.out.println(p1.compareTo(p3));
+    System.out.println(p1.compareTo(p4));
+  }
+}
+
+==> Q46 <==
+==> Car.java <==
+package uk.ac.cam.jc841.sv3;
+import java.util.*;
+
+public class Car implements Comparable<Car> {
+  private String manufacturer;
+  private int age;
+
+  public Car(String m, int a) {
+    manufacturer = m;
+    age = a;
+  }
+
+  public String getManufacturer() {
+    return manufacturer;
+  }
+  public int getAge() {
+    return age;
+  }
+
+  public int compareTo(Car c) {
+    return manufacturer.compareTo(c.manufacturer);
+  }
+
+  public static void main(String[] args) {
+    List<Car> cars = new ArrayList<Car>();
+    cars.add(new Car("Lada", 40));
+    cars.add(new Car("Renault", 6));
+    cars.add(new Car("Massey Ferguson", 7));
+    cars.add(new Car("DeLorean", 28));
+    cars.add(new Car("Bugatti", 1));
+    cars.add(new Car("Renault", 3));
+    cars.add(new Car("DeLorean", 128));
+
+    Collections.sort(cars);
+    for (Car c : cars) {
+      System.out.println(c.getManufacturer());
+    }
+
+    Collections.sort(cars, new CarComparator());
+    for (Car c : cars) {
+      System.out.println(c.getManufacturer());
+      System.out.println(c.getAge());
+    }
+  }
+}
+
+==> CarComparator.java <==
+package uk.ac.cam.jc841.sv3;
+import java.util.*;
+
+public class CarComparator implements Comparator<Car> {
+  public int compare(Car c1, Car c2) {
+    int manufacturerComparison = c1.getManufacturer().compareTo(c2.getManufacturer());
+    if (manufacturerComparison == 0) {
+      return (c1.getAge() - c2.getAge());
+    } else {
+      return manufacturerComparison;
+    }
+  }
+}
+
+==> Q47 <==
+package uk.ac.cam.jc841.sv3;
+import java.util.*;
+import java.io.*;
+
+public class PairSorter {
+  private static class Pair implements Comparable<Pair> {
+    private int first;
+    private int second;
+
+    public Pair(int f, int s) {
+      first = f;
+      second = s;
+    }
+
+    public int getFirst() {
+      return first;
+    }
+    public int getSecond() {
+      return second;
+    }
+
+    public int compareTo(Pair p) {
+      int firstComparison = first - p.first;
+      if (firstComparison == 0) {
+        return second - p.second;
+      } else {
+        return firstComparison;
+      }
+    }
+  }
+
+  public static void main(String[] args) throws FileNotFoundException, IOException {
+    BufferedReader input = new BufferedReader(new FileReader("numbers.csv"));
+    List<Pair> pairs = new ArrayList<Pair>();
+    String line;
+    while ((line = input.readLine()) != null) {
+      String[] numbers = line.split(",");
+      pairs.add(new Pair(Integer.parseInt(numbers[0]), Integer.parseInt(numbers[1])));
+    }
+    input.close();
+
+    Collections.sort(pairs);
+    for (Pair p : pairs) {
+      System.out.println(p.getFirst() + "," + p.getSecond());
+    }
+  }
+}

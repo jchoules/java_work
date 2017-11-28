@@ -1,0 +1,21 @@
+Exercise 3
+==========
+
+Question 3
+----------
+
+I think the program will print:
+
+  0
+  2
+  2
+  1
+
+Running the program produces:
+
+  0
+  2
+  2
+  1
+
+as predicted.

@@ -1,0 +1,31 @@
+package uk.ac.cam.jc841.urop;
+
+public class Vector {
+  private final int x;
+  private final int y;
+  private final int dX;
+  private final int dY;
+
+  public Line(int xStart, int yStart, int xChange, int yChange) {
+    x = xStart;
+    y = yStart;
+    dX = xChange;
+    dY = yChange;
+  }
+
+  public int xTail() {
+    return x;
+  }
+
+  public int yTail() {
+    return y;
+  }
+
+  public int xTip() {
+    return x + dX;
+  }
+
+  public int getY2() {
+    return x + ;
+  }
+}

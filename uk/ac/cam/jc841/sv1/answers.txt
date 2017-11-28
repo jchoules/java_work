@@ -1,0 +1,512 @@
+==> Q23 <==
+public CSStudent extends Student {
+  //other members/methods
+  public boolean pass() {
+    //check for 6 completed ticks
+  }
+}
+
+public NSStudent extends Student {
+  //other members/methods
+  public boolean pass() {
+    //check for 4 completed ticks
+  }
+}
+
+==> Q24 <==
+==> OOPList.java <==
+package uk.ac.cam.jc841.sv1;
+
+public interface OOPList {
+  public void addHead(int x);
+  public void deleteHead() throws OOPListException;
+  public int getHead() throws OOPListException;
+  public int getNth(int n) throws OOPListException;
+  public int length();
+}
+
+==> OOPArrayList.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class OOPArrayList implements OOPList {
+  private int[] contents = new int[0];
+  private int length = 0;
+  private static int expansionAmount = 10;
+
+  private void expand() {
+    int[] newContents = new int[contents.length + expansionAmount];
+    for (int i = 0; i < length; i++) {
+      newContents[i] = contents[i];
+    }
+    contents = newContents;
+  }
+
+  public void addHead(int x) {
+    if (!(length < contents.length)) {
+      expand();
+    }
+
+    for (int i = length - 1; i >= 0; i--) {
+      contents[i + 1] = contents[i];
+    }
+
+    contents[0] = x;
+    length++;
+  }
+
+  public void deleteHead() throws OOPListException {
+    if (length == 0) {
+      throw new OOPListException("nothing to delete");
+    } else {
+      for (int i = 0; i < length - 1; i++) {
+        contents[i] = contents[i + 1];
+      }
+
+      length--;
+    }
+  }
+
+  public int getHead() throws OOPListException {
+    if (length == 0) {
+      throw new OOPListException("nothing to get");
+    } else {
+      return contents[0];
+    }
+  }
+
+  public int getNth(int n) throws OOPListException {
+    if (n > length - 1 || n < -length) {
+      throw new OOPListException("index out of bounds");
+    } else if (n < 0) {
+      n += length;
+    }
+
+    return contents[n];
+  }
+
+  public int length() {
+    return length;
+  }
+}
+
+==> OOPLinkedList.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class OOPLinkedList implements OOPList {
+  private class OOPLinkedListElement {
+    private int contents;
+    private OOPLinkedListElement next;
+
+    public OOPLinkedListElement(int x) {
+      contents = x;
+    }
+
+    public int getContents() {
+      return contents;
+    }
+
+    public void setContents(int x) {
+      contents = x;
+    }
+
+    public OOPLinkedListElement getNext() {
+      return next;
+    }
+
+    public void setNext(OOPLinkedListElement n) {
+      next = n;
+    }
+  }
+
+  private OOPLinkedListElement head;
+
+  public boolean isEmpty() {
+    return (head == null);
+  }
+
+  public void addHead(int x) {
+    OOPLinkedListElement newHead = new OOPLinkedListElement(x);
+    newHead.setNext(head);
+    head = newHead;
+  }
+
+  public void deleteHead() throws OOPListException {
+    if (isEmpty()) {
+      throw new OOPListException("nothing to delete");
+    } else {
+      head = head.getNext();
+    }
+  }
+
+  public int getHead() throws OOPListException {
+    if (isEmpty()) {
+      throw new OOPListException("nothing to get");
+    } else {
+      return head.getContents();
+    }
+  }
+
+  public int getNth(int n) throws OOPListException {
+    if (n > length() - 1 || n < -length()) {
+      throw new OOPListException("index out of bounds");
+    } else if (n < 0) {
+      n += length();
+    }
+
+    OOPLinkedListElement currentElement = head;
+    for (int i = 0; i < n; i++) {
+      currentElement = currentElement.getNext();
+    }
+
+    return currentElement.getContents();
+  }
+
+  public int length() {
+    OOPLinkedListElement currentElement = head;
+    int count = 0;
+    while (currentElement != null) {
+      currentElement = currentElement.getNext();
+      count++;
+    }
+    return count;
+  }
+
+  public void reverse() {
+    OOPLinkedListElement previousElement = null;
+    OOPLinkedListElement currentElement = head;
+    OOPLinkedListElement nextElement;
+    while (currentElement != null) {
+      nextElement = currentElement.getNext();
+      currentElement.setNext(previousElement);
+      previousElement = currentElement;
+      currentElement = nextElement;
+    }
+    head = previousElement;
+  }
+}
+
+==> OOPListException.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class OOPListException extends RuntimeException {
+  public OOPListException(String msg) {
+    super(msg);
+  }
+}
+
+==> OOPListTest.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class OOPListTest {
+  public static void main(String[] args) {
+    OOPList testList = new OOPArrayList();
+    testList.addHead(3);
+    testList.addHead(6);
+    testList.addHead(-2);
+
+    System.out.println(testList.length());
+    System.out.println(testList.getHead());
+    System.out.println(testList.getNth(1));
+    System.out.println(testList.getNth(-1));
+
+    try {
+      System.out.println(testList.getNth(5));
+    } catch (OOPListException ole) {
+      System.out.println(ole.getMessage());
+    }
+
+    testList.deleteHead();
+    System.out.println(testList.getHead());
+
+    testList.deleteHead();
+    testList.deleteHead();
+
+    try {
+      System.out.println(testList.getHead());
+    } catch (OOPListException ole) {
+      System.out.println(ole.getMessage());
+    }
+
+    System.out.println(testList.length());
+  }
+}
+
+==> Q25 <==
+==> OOPQueue.java <==
+package uk.ac.cam.jc841.sv1;
+
+public interface OOPQueue {
+  public boolean isEmpty();
+  public int getHead() throws OOPQueueException;
+  public void dequeue() throws OOPQueueException;
+  public void enqueue(int x);
+}
+
+==> OOPListQueue.java <==
+package uk.ac.cam.jc841.sv1;
+
+class OOPListQueue implements OOPQueue {
+  private OOPLinkedList front = new OOPLinkedList();
+  private OOPLinkedList rear = new OOPLinkedList();
+
+  private void normalise() {
+    if (front.isEmpty() && !rear.isEmpty()) {
+      front = rear;
+      front.reverse();
+      rear = new OOPLinkedList();
+    }
+  }
+
+  public boolean isEmpty() {
+    return (front.isEmpty() && rear.isEmpty());
+  }
+
+  public int getHead() throws OOPQueueException {
+    if (isEmpty()) {
+      throw new OOPQueueException("nothing to get");
+    } else {
+      return front.getHead();
+    }
+  }
+
+  public void dequeue() throws OOPQueueException {
+    if (isEmpty()) {
+      throw new OOPQueueException("nothing to dequeue");
+    } else {
+      front.deleteHead();
+      normalise();
+    }
+  }
+
+  public void enqueue(int x) {
+    rear.addHead(x);
+    normalise();
+  }
+}
+
+==> OOPArrayQueue.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class OOPArrayQueue implements OOPQueue {
+  private int[] contents = new int[0];
+  private int length = 0;
+  private int start = 0;
+  private static int expansionAmount = 10;
+
+  private void expand() {
+    int[] newContents = new int[contents.length + expansionAmount];
+    for (int i = 0; i < length; i++) {
+      newContents[i] = contents[(start + i) % contents.length];
+    }
+    contents = newContents;
+    start = 0;
+  }
+
+  public boolean isEmpty() {
+    return (length == 0);
+  }
+
+  public int getHead() throws OOPQueueException {
+    if (isEmpty()) {
+      throw new OOPQueueException("nothing to get");
+    } else {
+      return contents[start];
+    }
+  }
+
+  public void dequeue() throws OOPQueueException {
+    if (isEmpty()) {
+      throw new OOPQueueException("nothing to dequeue");
+    } else {
+      start++;
+      length--;
+    }
+  }
+
+  public void enqueue(int x) {
+    if (!(length < contents.length)) {
+      expand();
+    }
+
+    contents[(start + length) % contents.length] = x;
+    length++;
+  }
+}
+
+==> OOPQueueException.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class OOPQueueException extends RuntimeException {
+  public OOPQueueException(String msg) {
+    super(msg);
+  }
+}
+
+==> OOPQueueTest.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class OOPQueueTest {
+  public static void main(String[] args) {
+    OOPQueue testQueue = new OOPArrayQueue();
+
+    System.out.println(testQueue.isEmpty());
+
+    testQueue.enqueue(3);
+    testQueue.enqueue(6);
+    testQueue.enqueue(-2);
+
+    System.out.println(testQueue.isEmpty());
+    System.out.println(testQueue.getHead());
+
+    testQueue.dequeue();
+
+    System.out.println(testQueue.getHead());
+
+    testQueue.dequeue();
+    testQueue.enqueue(4);
+
+    System.out.println(testQueue.getHead());
+
+    testQueue.dequeue();
+    testQueue.dequeue();
+
+    try {
+      System.out.println(testQueue.getHead());
+    } catch (OOPQueueException oqe) {
+      System.out.println(oqe.getMessage());
+    }
+
+    try {
+      testQueue.dequeue();
+    } catch (OOPQueueException oqe) {
+      System.out.println(oqe.getMessage());
+    }
+  }
+}
+
+==> Q26 <==
+public interface NinjaLike { //The Ninja class should be altered to implement NinjaLike
+  //These should be the signatures of the methods of the Ninja class:
+  public void sneak();
+  public void throwStars(int howmany);
+  //etc.
+}
+
+public class NinjaEmployee extends Employee implements NinjaLike {
+  private Ninja ninja;
+  //The methods of NinjaEmployee simply delegate to a private instance of Ninja
+  //This bears a slight resemblance to the Decorator pattern
+  public void sneak() {
+    ninja.sneak();
+  }
+  public void throwStars(int howmany) {
+    ninja.throwStars(howmany);
+  }
+  //etc.
+  
+  //We can also override methods of employee:
+  public void playOfficePrank() {
+    ninja.sneak();
+    super.playOfficePrank();
+  }
+  //etc.
+}
+
+==> Q27 <==
+==> A.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class A {
+  public A() {
+    System.out.println("Constructing A");
+  }
+}
+
+==> B.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class B extends A {
+  public B() {
+    System.out.println("Constructing B");
+  }
+}
+
+==> C.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class C extends B {
+  public C() {
+    System.out.println("Constructing C");
+  }
+}
+
+==> A2.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class A2 {
+  public A2(String msg) {
+    System.out.println("Constructing A2 with message:");
+    System.out.println(msg);
+  }
+}
+
+==> B2.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class B2 extends A2 {
+  public B2() {
+    super("B2's constructor has filled this in by calling super");
+    System.out.println("Constructing B2");
+  }
+}
+
+==> C2.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class C2 extends B2 {
+  public C2() {
+    System.out.println("Constructing C2");
+  }
+}
+
+==> ABCTest.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class ABCTest {
+  public static void main(String[] args) {
+    System.out.println("With zero-argument constructor on A:");
+    C testC = new C();
+
+    System.out.println("With one-argument constructor on A2:");
+    C2 testC2 = new C2();
+  }
+}
+
+==> Q31 <==
+==> NewtonRaphsonSquareRoot.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class NewtonRaphsonSquareRoot {
+  public static double sqrtNR(double x, double error) throws NegativeSquareRootException {
+    if (x < 0.0) {
+      throw new NegativeSquareRootException();
+    } else {
+      double guess = 1.0;
+      while (!(Math.abs(guess * guess - x) < error)) {
+        guess = (guess + x / guess) / 2;
+      }
+      return guess;
+    }
+  }
+
+  public static void main(String[] args) {
+    System.out.println(sqrtNR(3.0, 0.01));
+    System.out.println(sqrtNR(-2.0, 0.1)); //throws an error
+  }
+}
+
+==> NegativeSquareRootException.java <==
+package uk.ac.cam.jc841.sv1;
+
+public class NegativeSquareRootException extends RuntimeException {
+}
